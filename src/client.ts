@@ -735,6 +735,27 @@ export class RPClient extends EventEmitter {
     return wait;
   }
 
+  /** Returns a array of soundboards */
+  async getSoundboardSounds(timeout: number = 5000): Promise<any[]> {
+    const nonce = v4();
+
+    const wait = this.waitFor(
+      "getSoundboardSounds",
+      (_, n) => n === nonce,
+      timeout
+    ).then((d) => d[0]);
+
+    this.ipc.send(
+      new Packet(OpCode.Frame, {
+        cmd: Command.GetSoundboardSounds,
+        nonce,
+      })
+    );
+
+    return wait;
+  }
+  
+
   /** Returns an Array of Entitlements */
   async getEntitlements(timeout: number = 5000): Promise<any[]> {
     const nonce = v4();
