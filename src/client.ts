@@ -184,12 +184,6 @@ export class RPClient extends EventEmitter {
       case RPCEvent.Ready:
         this.user = data.user;
         this.config = data.config;
-        for (const e of Object.values(RPCEvent)) {
-          if (IGNORED_AUTO_EVENTS.includes(e)) continue;
-          try {
-            await this.subscribe(e);
-          } catch (e) {}
-        }
         this.emit("ready");
         break;
 
@@ -210,6 +204,15 @@ export class RPClient extends EventEmitter {
 
         this.emit(event, data);
         break;
+    }
+  }
+
+  async subscribeEvents() {
+    for (const e of Object.values(RPCEvent)) {
+      if (IGNORED_AUTO_EVENTS.includes(e)) continue;
+      try {
+        await this.subscribe(e);
+      } catch (e) {}
     }
   }
 
@@ -748,6 +751,74 @@ export class RPClient extends EventEmitter {
     this.ipc.send(
       new Packet(OpCode.Frame, {
         cmd: Command.GetSoundboardSounds,
+        nonce,
+      })
+    );
+
+    return wait;
+  }
+
+  /** Plays a soundboard sound */
+  async playSoundboardSound(id: string, guild_id?: string, timeout: number = 5000): Promise<void> {
+    const nonce = v4();
+
+    const wait = this.waitFor("playSoundboardSound", (_, n) => n === nonce, timeout).then(() => {});
+
+    this.ipc.send(
+      new Packet(OpCode.Frame, {
+        cmd: Command.PlaySoundboardSound,
+        args: {
+          sound_id: id,
+          guild_id,
+        },
+        nonce,
+      })
+    );
+
+    return wait;
+  }
+
+  /** Video state update */
+  async videoStateUpdate(
+    video: boolean,
+    timeout: number = 5000
+  ): Promise<void> {
+    const nonce = v4();
+
+    const wait = this.waitFor(
+      "videoStateUpdate",
+      (_, n) => n === nonce,
+      timeout
+    ).then(() => {});
+
+    this.ipc.send(
+      new Packet(OpCode.Frame, {
+        cmd: Command.VideoStateUpdate,
+        args: {
+          active: video,
+        },
+        nonce,
+      })
+    );
+
+    return wait;
+  }
+
+  /** Set the Voice Settings of the Client */
+  async toggleVideo(
+    timeout: number = 5000
+  ): Promise<void> {
+    const nonce = v4();
+
+    const wait = this.waitFor(
+      "toggleVideo",
+      (_, n) => n === nonce,
+      timeout
+    ).then(() => {});
+
+    this.ipc.send(
+      new Packet(OpCode.Frame, {
+        cmd: Command.ToggleVideo,
         nonce,
       })
     );

@@ -76,9 +76,10 @@ export enum Command {
   SetUserVoiceSettings2 = "SET_USER_VOICE_SETTINGS_2",
   CreateChannelInvite = "CREATE_CHANNEL_INVITE",
   GetRelationships = "GET_RELATIONSHIPS",
-
   GetSoundboardSounds = "GET_SOUNDBOARD_SOUNDS",
-  PlaySoundboardSound = "PLAY_SOUNDBOARD_SOUND"
+  PlaySoundboardSound = "PLAY_SOUNDBOARD_SOUND",
+  VideoStateUpdate = "VIDEO_STATE_UPDATE",
+  ToggleVideo = "TOGGLE_VIDEO",
 }
 
 /** Events DISPATCH'd from IPC. */
@@ -109,7 +110,6 @@ export enum RPCEvent {
   VoiceSettingsUpdate2 = "VOICE_SETTINGS_UPDATE_2",
   GameJoin = "GAME_JOIN",
   GameSpectate = "GAME_SPECTATE",
-  LobbyDelete = "LOBBY_DELETE",
   LobbyUpdate = "LOBBY_UPDATE",
   LobbyMemberConnect = "LOBBY_MEMBER_CONNECT",
   LobbyMemberDisconnect = "LOBBY_MEMBER_DISCONNECT",
